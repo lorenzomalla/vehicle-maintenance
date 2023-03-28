@@ -8,6 +8,9 @@ To use the application, you must have Java 1.8 or 11 and Maven installed on your
 
 To run the application, clone the repository and then run the following command:
 
+```sh
+mvn spring-boot:run
+```
 
 The application will be available at http://localhost:`${server.port}` (see in application.yml). 
 
