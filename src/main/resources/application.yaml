@@ -1,0 +1,16 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: EventPlanning
+  datasource:
+    url: jdbc:postgresql://localhost:5432/planning_event
+    username: lorenzomallardo
+    password: 
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true

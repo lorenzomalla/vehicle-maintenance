@@ -1,0 +1,157 @@
+swagger: '2.0'
+info:
+  title: Event Planning App
+  version: 1.0.0
+tags:
+  - name: Events
+    description: API for managing events
+  - name: Invites
+    description: API for managing invites
+
+definitions:
+  Event:
+    type: object
+    properties:
+      nome:
+        type: string
+        description: Name of the event
+      data:
+        type: string
+        format: date
+        description: Date of the event
+      luogo:
+        type: string
+        description: Location of the event
+      ospiti:
+        type: array
+        description: List of guests
+        items:
+          type: string
+  Invite:
+    type: object
+    properties:
+      nome:
+        type: string
+        description: Name of the invited guest
+      email:
+        type: string
+        description: Email address of the invited guest
+paths:
+  /event:
+    post:
+      summary: Create a new event
+      operationId: createEvent
+      tags:
+        - Events
+      parameters:
+        - in: body
+          name: body
+          description: Data of the event to be created
+          required: true
+          schema:
+            $ref: '#/definitions/Event'
+      responses:
+        201:
+          description: The event has been created successfully
+    get:
+      summary: Retrieve all events
+      tags:
+        - Events
+      responses:
+        200:
+          description: List of all events
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Event'
+  /event/{eventId}:
+    get:
+      tags:
+        - Events
+      summary: Retrieve a specific event
+      operationId: retrieveEvents
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          type: string
+          description: ID of the event to retrieve
+      responses:
+        200:
+          description: Details of the event
+          schema:
+            $ref: '#/definitions/Event'
+    put:
+      tags:
+        - Events
+      summary: Update a specific event
+      operationId: updateEvent
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          type: string
+          description: ID of the event to update
+        - in: body
+          name: body
+          description: Data of the event to update
+          required: true
+          schema:
+            $ref: '#/definitions/Event'
+      responses:
+        200:
+          description: The event has been updated successfully
+    delete:
+      tags:
+        - Events
+      summary: Delete a specific event
+      operationId: deleteEvent
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          type: string
+          description: ID of the event to delete
+      responses:
+        204:
+          description: The event has been deleted successfully
+  
+  /event/{eventId}/invite:
+    post:
+      tags:
+        - Invites
+      summary: Invite a guest to the event
+      operationId: createInvite
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          type: string
+          description: ID of the event to send the invitation to
+        - in: body
+          name: body
+          description: Data of the invitation to send
+          required: true
+          schema:
+            $ref: '#/definitions/Invite'
+      responses:
+        201:
+          description: The invitation has been sent successfully
+  /event/{eventId}/invite/{inviteId}:
+    get:
+      tags:
+        - Invites
+      summary: Retrieve a specific invitation
+      operationId: retrieveSpecificInvite
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          type: string
+        - in: path
+          name: inviteId
+          required: true
+          type: string
+      responses:
+          204:
+            description: L'invito è stato cancellato con successo
