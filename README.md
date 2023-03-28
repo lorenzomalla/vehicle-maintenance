@@ -4,7 +4,7 @@ Planning-Event is a Java application based on Spring Boot that allows users to c
 
 ## Getting Started
 
-To use the application, you must have Java 11 and Maven installed on your system. Additionally, you need to create an empty Postgres database and set the login credentials in the `application.properties` file.
+To use the application, you must have Java 1.8 or 11 and Maven installed on your system. Additionally, you need to create an empty Postgres database and set the login credentials in the `application.properties` file.
 
 To run the application, clone the repository and then run the following command:
 
