@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.9</version>
+		<version>2.7.10</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>it.lorenzomalla</groupId>
@@ -24,12 +24,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -51,11 +45,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
 			<scope>test</scope>
@@ -65,6 +54,31 @@
 			<artifactId>mapstruct</artifactId>
 			<version>1.5.3.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>0.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.0.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.hateoas</groupId>
+					<artifactId>spring-hateoas</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -73,9 +87,9 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>io.swagger</groupId>
-				<artifactId>swagger-codegen-maven-plugin</artifactId>
-				<version>2.4.15</version>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>5.1.0</version>
 				<executions>
 					<execution>
 						<id>generate-swagger-code</id>
@@ -84,20 +98,38 @@
 						</goals>
 						<configuration>
 							<inputSpec>${project.basedir}/src/main/resources/swagger.yaml</inputSpec>
-							<language>spring</language>
-							<library>spring-mvc</library>
+							<generatorName>spring</generatorName>
+							<library>spring-boot</library>
 							<apiPackage>it.lorenzomalla.event.api</apiPackage>
 							<modelPackage>it.lorenzomalla.event.model</modelPackage>
+							<output>${project.build.directory}/generated-sources</output>
+							<additionalProperties>
+								<skipDefaultInterface>true</skipDefaultInterface>
+								<useLombok>true</useLombok>
+							</additionalProperties>
+							<generateApiTests>false</generateApiTests>
 							<configOptions>
 								<skipAuth>true</skipAuth>
 								<sourceFolder>src/java/main</sourceFolder>
-								<dateLibrary>java8</dateLibrary>
+								<dateLibrary>java8-localdatetime</dateLibrary>
 								<java8>true</java8>
 								<interfaceOnly>true</interfaceOnly>
+								<additionalModelTypeAnnotations>
+                                    @lombok.NoArgsConstructor;@lombok.AllArgsConstructor;@lombok.Builder
+                                </additionalModelTypeAnnotations>
+								<generateSupportingFiles>false</generateSupportingFiles>
+								<skipDefaultInterface>false</skipDefaultInterface>
 							</configOptions>
 						</configuration>
 					</execution>
 				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.projectlombok</groupId>
+						<artifactId>lombok</artifactId>
+						<version>1.18.24</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -106,6 +138,11 @@
 					<source>1.8</source>
 					<target>1.8</target>
 					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>1.18.24</version>
+						</path>
 						<path>
 							<groupId>org.mapstruct</groupId>
 							<artifactId>mapstruct-processor</artifactId>

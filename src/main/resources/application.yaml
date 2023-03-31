@@ -14,3 +14,9 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    
+jwt:
+  app:
+    jwtCookieName: planning-cookie
+    jwtSecret: jwtsecret
+    jwtExpirationMs: 86400000

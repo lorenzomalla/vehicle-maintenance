@@ -9,19 +9,19 @@ import it.lorenzomalla.event.model.Invite;
 import it.lorenzomalla.event.pojo.InvitePojo;
 import it.lorenzomalla.event.repository.InviteJpaConnector;
 import it.lorenzomalla.event.service.InviteService;
-import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
 public class InviteServiceImpl implements InviteService {
 
 	@Autowired
-	private final InviteJpaConnector inviteJpaConnector;
+	private InviteJpaConnector inviteJpaConnector;
 
-	private final InviteMapper inviteMapper;
+	@Autowired
+	private InviteMapper inviteMapper;
 
 	@Override
 	public Invite createEvent(InvitePojo event) {
+		InviteEntity i = InviteEntity.builder().build();
 		InviteEntity inviteEntity = inviteMapper.map(event);
 		inviteJpaConnector.save(inviteEntity);
 		return new Invite();
