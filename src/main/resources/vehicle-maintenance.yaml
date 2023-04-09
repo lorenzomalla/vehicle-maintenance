@@ -4,7 +4,7 @@ info:
   title: "Vehicle Maintenance App"
   
 host: "api.vehiclemaintenanceapp.com"
-basePath: "/v1"
+basePath: "/api/v1"
 
 tags:
   - name: Vehicle

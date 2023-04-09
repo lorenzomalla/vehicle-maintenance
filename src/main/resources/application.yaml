@@ -1,5 +1,7 @@
 server:
   port: 9090
+  servlet:
+    context-path: /v1/api/
 
 spring:
   application:
@@ -14,9 +16,11 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
     
 jwt:
   app:
     jwtCookieName: vehicle-maintenance
     jwtSecret: jwtsecret
     jwtExpirationMs: 86400000
+    
