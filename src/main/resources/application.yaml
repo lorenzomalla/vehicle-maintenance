@@ -3,9 +3,9 @@ server:
 
 spring:
   application:
-    name: EventPlanning
+    name: Vehicle Maintenance App
   datasource:
-    url: jdbc:postgresql://localhost:5432/planning_event
+    url: jdbc:postgresql://localhost:5432/vehicle_maintenance
     username: lorenzomallardo
     password: 
     driver-class-name: org.postgresql.Driver
@@ -17,6 +17,6 @@ spring:
     
 jwt:
   app:
-    jwtCookieName: planning-cookie
+    jwtCookieName: vehicle-maintenance
     jwtSecret: jwtsecret
     jwtExpirationMs: 86400000

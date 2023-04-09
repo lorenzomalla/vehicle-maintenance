@@ -1,0 +1,412 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "Vehicle Maintenance App"
+  
+host: "api.vehiclemaintenanceapp.com"
+basePath: "/v1"
+
+tags:
+  - name: Vehicle
+    description: API for managing vehicle
+  - name: Customer
+    description: API for managing customer
+  - name: Login
+    description: API for Login
+  - name: Signup
+    description: API for Signup
+
+schemes:
+  - "https"
+
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    in: header
+    name: Authorization
+
+definitions:
+  Customer:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      username:
+        type: string
+        example: "Mario Rossi"
+      email:
+        type: string
+        example: "mariorossi@example.com"
+      phoneNumber:
+        type: string
+        example: "+39123456789"
+  
+  Vehicle:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: "5678"
+      make:
+        type: string
+        example: "Toyota"
+      model:
+        type: string
+        example: "Corolla"
+      year:
+        type: integer
+        example: 2018
+      color:
+        type: string
+        example: "black"
+      licensePlate:
+        type: string
+        example: "AB123CD"
+      image:
+        type: string
+        format: binary
+        description: "Image of the vehicle in JPG, PNG, or GIF format"
+
+  Intervention:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: "7890"
+      date:
+        type: string
+        format: date-time
+        example: "2023-04-08T10:30:00Z"
+      service:
+        type: string
+        example: "Oil change"
+      notes:
+        type: string
+        example: "Replaced oil and filter"
+      
+  ErrorModel:
+    type: object
+    required:
+      - "errorCode"
+      - "errorMessage"
+    properties:
+      errorCode: 
+        type: string
+      errorMessage:
+        type: string
+      errors:
+        type: object
+        additionalProperties:
+          type: object
+        
+  LoginRequest:
+    type: object
+    required:
+      - "username"
+      - "password"
+    properties:
+      id:
+        type: string
+        format: uuid
+      username: 
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      email:
+        type: string
+      roles:
+        type: array
+        items:
+          type: string
+
+  SignupRequest:
+    type: object
+    required:
+      - "username"
+      - "password"
+    properties:
+      id:
+        type: string
+        format: uuid
+      username: 
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      email:
+        type: string
+      roles:
+        type: array
+        items:
+          type: string
+        
+  UserInfoResponse:
+    type: object
+    properties:
+      id: 
+        type: string
+        format: uuid
+      username:
+        type: string
+      email: 
+        type: string
+      phone: 
+        type: string
+      roles:
+        type: array
+        items:
+          type: string
+
+paths:
+  /customers:
+    get:
+      summary: Get all customers
+      description: Retrieves a list of all customers
+      tags:
+        - Customer
+      operationId: getAllCustomers
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/customer'
+        401:
+          description: Unauthorized
+      security:
+        - ApiKeyAuth: []
+        
+  /customers/{customerId}:
+    get:
+      summary: Get customer details
+      description: Retrieves detailed information about a specific customer
+      tags:
+        - Customer
+      operationId: getCustomerDetails
+      produces:
+        - application/json
+      parameters:
+        - name: customerId
+          in: path
+          description: ID of the customer to retrieve
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/customer'
+        401:
+          description: Unauthorized
+        404:
+          description: customer not found
+
+  /customers/{customerId}/vehicles:
+    get:
+      summary: Get vehicles for a specific customer
+      description: Retrieves a list of all vehicles associated with a specific customer
+      tags:
+        - Vehicle
+      operationId: getVehicleSpecificCustomer
+      produces:
+        - application/json
+      parameters:
+        - name: customerId
+          in: path
+          description: ID of the customer to retrieve vehicles for
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Vehicle'
+        401:
+          description: Unauthorized
+        500:
+          description: Internal Server Error
+  
+  /customers/{customerId}/vehicles/{vehicleId}/interventions:
+    post:
+      summary: Adds a new intervention for a specific vehicle of a specific customer
+      tags:
+        - Vehicle
+      operationId: createNewIntervention
+      parameters:
+        - name: customerId
+          in: path
+          description: ID of the customer that the vehicle is associated with
+          required: true
+          type: string
+        - name: vehicleId
+          in: path
+          description: ID of the vehicle that the intervention is associated with
+          required: true
+          type: string
+        - name: intervention
+          in: body
+          description: Intervention details
+          required: true
+          schema:
+            $ref: '#/definitions/Intervention'
+      responses:
+        201:
+          description: Intervention successfully added
+        400:
+          description: Invalid request body
+        404:
+          description: customer or vehicle not found
+          
+  /customers/{customerId}/vehicles/{vehicleId}/interventions/{interventionId}:
+    put:
+      summary: Updates an existing intervention for a specific vehicle of a specific customer
+      tags:
+        - Vehicle
+      operationId: updateIntervention
+      parameters:
+        - name: customerId
+          in: path
+          description: ID of the customer that the vehicle is associated with
+          required: true
+          type: string
+        - name: vehicleId
+          in: path
+          description: ID of the vehicle that the intervention is associated with
+          required: true
+          type: string
+        - name: interventionId
+          in: path
+          description: ID of the intervention to update
+          required: true
+          type: string
+        - name: intervention
+          in: body
+          description: Intervention details to update
+          required: true
+          schema:
+            $ref: '#/definitions/Intervention'
+      responses:
+        200:
+          description: Intervention successfully updated
+        400:
+          description: Invalid request body
+        404:
+          description: customer, vehicle, or intervention not found
+          
+    delete:
+      summary: Deletes an existing intervention for a specific vehicle of a specific customer
+      tags:
+        - Vehicle
+      operationId: deleteIntervention
+      parameters:
+        - name: customerId
+          in: path
+          description: ID of the customer that the vehicle is associated with
+          required: true
+          type: string
+        - name: vehicleId
+          in: path
+          description: ID of the vehicle that the intervention is associated with
+          required: true
+          type: string
+        - name: interventionId
+          in: path
+          description: ID of the intervention to delete
+          required: true
+          type: string
+      responses:
+        204:
+          description: Intervention successfully deleted
+        404:
+          description: customer, vehicle, or intervention not
+          
+  /login:
+    post:
+      tags:
+        - Login
+      summary: Login API
+      operationId: login
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/LoginRequest'
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/UserInfoResponse'
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        400:
+          description: BadRequest
+          schema:
+            $ref: '#/definitions/ErrorModel'
+            
+  /signup:
+    post:
+      tags:
+        - Signup
+      summary: Signup API
+      operationId: signup
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/SignupRequest'
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/UserInfoResponse'
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        400:
+          description: BadRequest
+          schema:
+            $ref: '#/definitions/ErrorModel'
+            
+  /signout:
+    post:
+      tags:
+        - Signout
+      summary: Signout API
+      operationId: signout
+      responses:
+        200:
+          description: Success
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'

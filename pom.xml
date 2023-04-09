@@ -9,10 +9,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>it.lorenzomalla</groupId>
-	<artifactId>planning-event</artifactId>
+	<artifactId>vehicle-maintenance</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>planning-event</name>
-	<description>Planning your event</description>
+	<name>vehicle-maintenance</name>
+	<description>Vehicle Maintenance App</description>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
@@ -97,11 +97,11 @@
 							<goal>generate</goal>
 						</goals>
 						<configuration>
-							<inputSpec>${project.basedir}/src/main/resources/swagger.yaml</inputSpec>
+							<inputSpec>${project.basedir}/src/main/resources/vehicle-maintenance.yaml</inputSpec>
 							<generatorName>spring</generatorName>
 							<library>spring-boot</library>
-							<apiPackage>it.lorenzomalla.event.api</apiPackage>
-							<modelPackage>it.lorenzomalla.event.model</modelPackage>
+							<apiPackage>it.lorenzomalla.app.api</apiPackage>
+							<modelPackage>it.lorenzomalla.app.model</modelPackage>
 							<output>${project.build.directory}/generated-sources</output>
 							<additionalProperties>
 								<skipDefaultInterface>true</skipDefaultInterface>
@@ -115,7 +115,7 @@
 								<java8>true</java8>
 								<interfaceOnly>true</interfaceOnly>
 								<additionalModelTypeAnnotations>
-                                    @lombok.NoArgsConstructor;@lombok.AllArgsConstructor;@lombok.Builder
+                                    @lombok.NoArgsConstructor;@lombok.AllArgsConstructor;@lombok.Builder;@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
 								<generateSupportingFiles>false</generateSupportingFiles>
 								<skipDefaultInterface>false</skipDefaultInterface>
