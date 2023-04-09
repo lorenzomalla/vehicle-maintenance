@@ -80,16 +80,19 @@ definitions:
         type: string
         format: uuid
         example: "7890"
-      date:
+      dateIntervention:
         type: string
         format: date-time
         example: "2023-04-08T10:30:00Z"
       service:
         type: string
         example: "Oil change"
-      notes:
+      note:
         type: string
         example: "Replaced oil and filter"
+      idVehicle:
+        type: string
+        format: uuid
       
   ErrorModel:
     type: object
@@ -267,28 +270,20 @@ paths:
       responses:
         201:
           description: Intervention successfully added
+          schema:
+            $ref: '#/definitions/Intervention'
         400:
           description: Invalid request body
         404:
           description: customer or vehicle not found
           
-  /interventions/{interventionId}/customers/{customerId}/vehicles/{vehicleId}:
+  /interventions/{interventionId}:
     put:
       summary: Updates an existing intervention for a specific vehicle of a specific customer
       tags:
         - Intervention
       operationId: updateIntervention
       parameters:
-        - name: customerId
-          in: path
-          description: ID of the customer that the vehicle is associated with
-          required: true
-          type: string
-        - name: vehicleId
-          in: path
-          description: ID of the vehicle that the intervention is associated with
-          required: true
-          type: string
         - name: interventionId
           in: path
           description: ID of the intervention to update
@@ -303,6 +298,8 @@ paths:
       responses:
         200:
           description: Intervention successfully updated
+          schema:
+            $ref: '#/definitions/Intervention'          
         400:
           description: Invalid request body
         404:
@@ -314,16 +311,6 @@ paths:
         - Intervention
       operationId: deleteIntervention
       parameters:
-        - name: customerId
-          in: path
-          description: ID of the customer that the vehicle is associated with
-          required: true
-          type: string
-        - name: vehicleId
-          in: path
-          description: ID of the vehicle that the intervention is associated with
-          required: true
-          type: string
         - name: interventionId
           in: path
           description: ID of the intervention to delete
