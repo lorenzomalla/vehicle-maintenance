@@ -20,13 +20,14 @@ public class CustomerController implements CustomersApi {
 
 	@Override
 	public ResponseEntity<List<Customer>> getAllCustomers() {
-
-		return CustomersApi.super.getAllCustomers();
+		return ResponseEntity.ok().body(customerService.getAllCustomers());
 	}
 
 	@Override
 	public ResponseEntity<Customer> getCustomerDetails(String customerId) {
 		return ResponseEntity.ok().body(customerService.getCustomerDetails(customerId));
 	}
+	
+	
 
 }

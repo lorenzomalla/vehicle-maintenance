@@ -8,9 +8,11 @@ basePath: "/v1"
 
 tags:
   - name: Vehicle
-    description: API for managing vehicle
+    description: API for managing vehicles
   - name: Customer
-    description: API for managing customer
+    description: API for managing customers
+  - name: Intervention
+    description: API for managing inteventions    
   - name: Login
     description: API for Login
   - name: Signup
@@ -31,22 +33,19 @@ securityDefinitions:
     name: Authorization
 
 definitions:
-  Customer:
+  customer:
     type: object
     properties:
       id:
         type: string
         format: uuid
-        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-      username:
+        example: "1234"
+      name:
         type: string
-        example: "Mario Rossi"
+        example: "John Doe"
       email:
         type: string
-        example: "mariorossi@example.com"
-      phoneNumber:
-        type: string
-        example: "+39123456789"
+        example: "johndoe@example.com"
   
   Vehicle:
     type: object
@@ -72,8 +71,7 @@ definitions:
         example: "AB123CD"
       image:
         type: string
-        format: binary
-        description: "Image of the vehicle in JPG, PNG, or GIF format"
+        description: "URL Image of the vehicle in JPG, PNG, or GIF format"
 
   Intervention:
     type: object
@@ -243,11 +241,11 @@ paths:
         500:
           description: Internal Server Error
   
-  /customers/{customerId}/vehicles/{vehicleId}/interventions:
+  /interventions/customers/{customerId}/vehicles/{vehicleId}:
     post:
       summary: Adds a new intervention for a specific vehicle of a specific customer
       tags:
-        - Vehicle
+        - Intervention
       operationId: createNewIntervention
       parameters:
         - name: customerId
@@ -274,11 +272,11 @@ paths:
         404:
           description: customer or vehicle not found
           
-  /customers/{customerId}/vehicles/{vehicleId}/interventions/{interventionId}:
+  /interventions/{interventionId}/customers/{customerId}/vehicles/{vehicleId}:
     put:
       summary: Updates an existing intervention for a specific vehicle of a specific customer
       tags:
-        - Vehicle
+        - Intervention
       operationId: updateIntervention
       parameters:
         - name: customerId
@@ -313,7 +311,7 @@ paths:
     delete:
       summary: Deletes an existing intervention for a specific vehicle of a specific customer
       tags:
-        - Vehicle
+        - Intervention
       operationId: deleteIntervention
       parameters:
         - name: customerId
@@ -336,6 +334,77 @@ paths:
           description: Intervention successfully deleted
         404:
           description: customer, vehicle, or intervention not
+          
+  /vehicle/customer/{customerId}/create:
+    post:
+      tags:
+        - Vehicle
+      summary: Create new Vehicle associated to Customer
+      operationId: createVehicle
+      parameters:
+        - name: customerId
+          in: path
+          description: ID of the customer that the vehicle is associated with
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/Vehicle'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/Vehicle'
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        400:
+          description: BadRequest
+          schema:
+            $ref: '#/definitions/ErrorModel'
+            
+  /vehicle/{vehicleId}:
+    put:
+      summary: Updates an existing vehicle of a specific customer
+      tags:
+        - Vehicle
+      operationId: updateVehicle
+      parameters:
+        - name: vehicleId
+          in: path
+          description: ID of the vehicle that the intervention is associated with
+          required: true
+          type: string
+        - name: vehicle
+          in: body
+          description: Vehicle details to update
+          required: true
+          schema:
+            $ref: '#/definitions/Vehicle'
+      responses:
+        200:
+          description: Vehicle successfully updated
+          schema:
+            $ref: '#/definitions/Vehicle'
+        400:
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/ErrorModel'          
+        404:
+          description: vehicle not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        500:
+          description: generic error
+          schema:
+            $ref: '#/definitions/ErrorModel'
           
   /login:
     post:
