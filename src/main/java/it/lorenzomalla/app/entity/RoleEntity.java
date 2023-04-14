@@ -10,16 +10,17 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import it.lorenzomalla.app.entity.enumaration.ERole;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table(name = "roles")
-@Builder
 @Getter
 @Setter
+@AllArgsConstructor
 public class RoleEntity {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -27,5 +28,7 @@ public class RoleEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(length = 20)
 	private ERole name;
+	
+	public RoleEntity() {}
 
 }

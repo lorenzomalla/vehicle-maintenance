@@ -59,7 +59,7 @@ public class CustomerEntity extends BaseEntity {
 	@Pattern(regexp = "^\\+39\\d{8,13}$|^0039\\d{8,13}$|^0\\d{8,10}$", message = "Numero di telefono non valido")
 	private String phoneNumber;
 
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<RoleEntity> roles;
 

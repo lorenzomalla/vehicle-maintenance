@@ -3,7 +3,7 @@ package it.lorenzomalla.app.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.lorenzomalla.app.api.CustomersApi;
@@ -11,8 +11,8 @@ import it.lorenzomalla.app.model.Customer;
 import it.lorenzomalla.app.service.CustomerService;
 import lombok.AllArgsConstructor;
 
-@Controller
-@RestController("/api")
+@RestController
+@RequestMapping("/v1/api/admin")
 @AllArgsConstructor
 public class CustomerController implements CustomersApi {
 

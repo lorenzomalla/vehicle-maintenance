@@ -4,9 +4,6 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 import it.lorenzomalla.app.model.ErrorModel;
 import lombok.Getter;
 import lombok.Setter;

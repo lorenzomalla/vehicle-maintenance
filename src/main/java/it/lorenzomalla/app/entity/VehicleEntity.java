@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "vehicle", uniqueConstraints = { @UniqueConstraint(columnNames = "numberPlate") })
+@Table(name = "vehicle", uniqueConstraints = { @UniqueConstraint(columnNames = "licensePlate") })
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -41,9 +41,9 @@ public class VehicleEntity extends BaseEntity {
 	@Column(name = "vehicle_id")
 	private UUID id;
 
-	private String year;
+	private Integer year;
 
-	private String numberPlate;
+	private String licensePlate;
 
 	private String brand;
 

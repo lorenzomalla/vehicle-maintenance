@@ -1,40 +1,47 @@
 package it.lorenzomalla.app.controller;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
-import it.lorenzomalla.app.configuration.security.JwtUtils;
-import it.lorenzomalla.app.entity.RoleEntity;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import it.lorenzomalla.app.configuration.security.JwtProvider;
+import it.lorenzomalla.app.constants.Constant.General;
+import it.lorenzomalla.app.constants.Constant.Role;
 import it.lorenzomalla.app.entity.CustomerEntity;
+import it.lorenzomalla.app.entity.RoleEntity;
 import it.lorenzomalla.app.entity.enumaration.ERole;
+import it.lorenzomalla.app.exception.VehicleRuntimeException;
+import it.lorenzomalla.app.mapper.CustomerMapper;
 import it.lorenzomalla.app.model.LoginRequest;
-import it.lorenzomalla.app.model.UserInfoResponse;
-import it.lorenzomalla.app.repository.RoleRepository;
+import it.lorenzomalla.app.pojo.CustomerPojo;
 import it.lorenzomalla.app.repository.CustomerRepository;
-import it.lorenzomalla.app.service.impl.CustomerDetailsImpl;
+import it.lorenzomalla.app.repository.RoleRepository;
+import lombok.extern.slf4j.Slf4j;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("public/authentication")
+@Slf4j
 public class AuthController {
 
 	@Autowired
@@ -50,26 +57,29 @@ public class AuthController {
 	PasswordEncoder encoder;
 
 	@Autowired
-	JwtUtils jwtUtils;
+	CustomerMapper customerMapper;
 
 	@PostMapping("/signin")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<Map<String, String>> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+		CustomerEntity user = this.userRepository.findByEmail(loginRequest.getEmail())
+				.orElseThrow(() -> new VehicleRuntimeException("404", "Cliente non trovato", HttpStatus.NOT_FOUND));
+		if (!this.encoder.matches(loginRequest.getPassword(), user.getPassword())) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenziali non valide");
+		}
+		ObjectMapper om = new ObjectMapper();
+		om.registerModules(new JavaTimeModule());
+		CustomerPojo userNode = customerMapper.fromEntityToPojo(user);
+		Map<String, Object> claimMap = new HashMap<String, Object>();
+		try {
+			claimMap.put(General.CUSTOMER, om.writeValueAsString(userNode));
+		} catch (JsonProcessingException e) {
+			log.error("Error during parse CustomerEntity in Signing");
+		}
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-
-		CustomerDetailsImpl userDetails = (CustomerDetailsImpl) authentication.getPrincipal();
-
-		ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
-
-		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
-				.collect(Collectors.toList());
-
-		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-				.body(UserInfoResponse.builder().email(userDetails.getEmail()).username(userDetails.getUsername())
-						.id(userDetails.getId()).roles(roles).build());
+		Map<String, String> map = new HashMap<>();
+		map.put("jwt", JwtProvider.createJwt(loginRequest.getEmail(), claimMap));
+		return ResponseEntity.ok().body(map);
 	}
 
 	@PostMapping("/signup")
@@ -82,25 +92,22 @@ public class AuthController {
 			return ResponseEntity.badRequest().build();
 		}
 
-		CustomerEntity user = CustomerEntity.builder().username(signUpRequest.getUsername()).email(signUpRequest.getEmail())
-				.password(encoder.encode(signUpRequest.getPassword())).build();
+		CustomerEntity user = CustomerEntity.builder().username(signUpRequest.getUsername())
+				.email(signUpRequest.getEmail()).password(encoder.encode(signUpRequest.getPassword())).build();
 
 		List<String> strRoles = signUpRequest.getRoles();
 		Set<RoleEntity> roles = new HashSet<>();
 
 		if (strRoles == null) {
-			findRole(roles, ERole.ROLE_USER);
+			findRole(roles, ERole.USER);
 		} else {
 			strRoles.forEach(role -> {
 				switch (role) {
-				case "admin":
-					findRole(roles, ERole.ROLE_ADMIN);
-					break;
-				case "mod":
-					findRole(roles, ERole.ROLE_MODERATOR);
+				case Role.USER:
+					findRole(roles, ERole.ADMIN);
 					break;
 				default:
-					findRole(roles, ERole.ROLE_USER);
+					findRole(roles, ERole.USER);
 				}
 			});
 		}
@@ -109,12 +116,6 @@ public class AuthController {
 		userRepository.save(user);
 
 		return ResponseEntity.ok().build();
-	}
-
-	@PostMapping("/signout")
-	public ResponseEntity<?> logoutUser() {
-		ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
-		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
 	}
 
 	private void findRole(Set<RoleEntity> roles, ERole erole) {
