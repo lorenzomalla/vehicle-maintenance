@@ -12,6 +12,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import it.lorenzomalla.app.constants.Constant.Role;
+import it.lorenzomalla.app.entity.enumaration.ERole;
 import it.lorenzomalla.app.repository.CustomerRepository;
 
 @Configuration
@@ -49,7 +51,10 @@ public class SecurityConfig {
 				.authorizeRequests()
 				.antMatchers("/public/**").permitAll()
 				.antMatchers("/v1/api/admin/**")
-				.hasAnyAuthority("ADMIN").anyRequest()
+				.hasAnyAuthority(Role.ADMIN)
+				.antMatchers("/v1/api/user/**")
+				.hasAnyAuthority(Role.ADMIN,Role.USER)
+				.anyRequest()
 				.authenticated();
 		return http.build();
 	}

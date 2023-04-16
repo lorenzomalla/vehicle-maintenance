@@ -1,8 +1,11 @@
 package it.lorenzomalla.app.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.lorenzomalla.app.api.VehicleApi;
@@ -12,6 +15,7 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/v1/api/user")
 public class VehicleController implements VehicleApi {
 
 	private final VehicleService vehicleService;
@@ -24,6 +28,16 @@ public class VehicleController implements VehicleApi {
 	@Override
 	public ResponseEntity<Vehicle> updateVehicle(String vehicleId, @Valid Vehicle body) {
 		return ResponseEntity.ok().body(vehicleService.updateVehicle(vehicleId, body));
+	}
+
+	@Override
+	public ResponseEntity<List<Vehicle>> listOfVehicle() {
+		return ResponseEntity.ok().body(vehicleService.getListOfVehicle());
+	}
+
+	@Override
+	public ResponseEntity<Vehicle> retrieveVehicle(String vehicleId) {
+		return ResponseEntity.ok().body(vehicleService.getVehicleById(vehicleId));
 	}
 
 }

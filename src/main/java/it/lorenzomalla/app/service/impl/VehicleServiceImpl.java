@@ -1,5 +1,6 @@
 package it.lorenzomalla.app.service.impl;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,9 @@ public class VehicleServiceImpl implements VehicleService {
 	@Override
 	public Vehicle createVehicle(String customerId, Vehicle body) {
 		VehicleEntity vehicleEntity = vehicleMapper.fromRequest(body);
-		vehicleEntity.setCustomer(customerRepository.findById(UUID.fromString(customerId)).orElse(new CustomerEntity()));
+		CustomerEntity customerEntity = customerRepository.findById(UUID.fromString(customerId))
+				.orElse(new CustomerEntity());
+		vehicleEntity.setCustomer(customerEntity);
 		vehicleRepository.save(vehicleEntity);
 		body.setId(vehicleEntity.getId());
 		return body;
@@ -40,6 +43,19 @@ public class VehicleServiceImpl implements VehicleService {
 		vehicleEntity = vehicleMapper.fromRequest(body);
 		vehicleRepository.save(vehicleEntity);
 		return body;
+	}
+
+	@Override
+	public List<Vehicle> getListOfVehicle() {
+		List<VehicleEntity> vehicleEntities = vehicleRepository.findAll();
+		return vehicleMapper.fromEntites(vehicleEntities);
+	}
+
+	@Override
+	public Vehicle getVehicleById(String vehicleId) {
+		VehicleEntity vehicleEntity = vehicleRepository.findById(UUID.fromString(vehicleId))
+				.orElseThrow(() -> new VehicleRuntimeException("404", "Nessun veicolo trovato", HttpStatus.NOT_FOUND));
+		return vehicleMapper.fromEntity(vehicleEntity);
 	}
 
 }

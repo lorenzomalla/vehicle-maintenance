@@ -13,10 +13,7 @@ tags:
     description: API for managing customers
   - name: Intervention
     description: API for managing inteventions    
-  - name: Login
-    description: API for Login
-  - name: Signup
-    description: API for Signup
+  - name: Authentication
 
 schemes:
   - "https"
@@ -33,7 +30,7 @@ securityDefinitions:
     name: Authorization
 
 definitions:
-  customer:
+  Customer:
     type: object
     properties:
       id:
@@ -54,7 +51,7 @@ definitions:
         type: string
         format: uuid
         example: "5678"
-      make:
+      brand:
         type: string
         example: "Toyota"
       model:
@@ -169,6 +166,12 @@ definitions:
         type: array
         items:
           type: string
+          
+  JWTResponse:
+    type: object
+    properties:
+      jwt:
+        type: string
 
 paths:
   /customers:
@@ -186,7 +189,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/customer'
+              $ref: '#/definitions/Customer'
         401:
           description: Unauthorized
       security:
@@ -211,7 +214,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/customer'
+            $ref: '#/definitions/Customer'
         401:
           description: Unauthorized
         404:
@@ -222,7 +225,7 @@ paths:
       summary: Get vehicles for a specific customer
       description: Retrieves a list of all vehicles associated with a specific customer
       tags:
-        - Vehicle
+        - Customer
       operationId: getVehicleSpecificCustomer
       produces:
         - application/json
@@ -392,11 +395,66 @@ paths:
           description: generic error
           schema:
             $ref: '#/definitions/ErrorModel'
+            
+    get:
+      summary: Get specific vehicle by ID
+      tags:
+        - Vehicle
+      operationId: retrieveVehicle
+      parameters:
+        - name: vehicleId
+          in: path
+          description: ID of the vehicle that the intervention is associated with
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Vehicle'
+        400:
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/ErrorModel'          
+        404:
+          description: vehicle not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        500:
+          description: generic error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+            
+  /vehicle:
+    get:
+      summary: Get list of vehicle
+      tags:
+        - Vehicle
+      operationId: listOfVehicle
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Vehicle'
+        400:
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/ErrorModel'          
+        404:
+          description: vehicle not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        500:
+          description: generic error
+          schema:
+            $ref: '#/definitions/ErrorModel'
           
-  /login:
+  /authentication/signin:
     post:
       tags:
-        - Login
+        - Authentication
       summary: Login API
       operationId: login
       parameters:
@@ -409,7 +467,7 @@ paths:
         200:
           description: Success
           schema:
-            $ref: '#/definitions/UserInfoResponse'
+            $ref: '#/definitions/JWTResponse'
         500:
           description: Internal Server Error
           schema:
@@ -423,10 +481,10 @@ paths:
           schema:
             $ref: '#/definitions/ErrorModel'
             
-  /signup:
+  /authentication/signup:
     post:
       tags:
-        - Signup
+        - Authentication
       summary: Signup API
       operationId: signup
       parameters:
@@ -453,10 +511,10 @@ paths:
           schema:
             $ref: '#/definitions/ErrorModel'
             
-  /signout:
+  /authentication/signout:
     post:
       tags:
-        - Signout
+        - Authentication
       summary: Signout API
       operationId: signout
       responses:
