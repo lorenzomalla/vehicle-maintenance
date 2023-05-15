@@ -31,7 +31,7 @@ public class AuthAccessForbidden implements AccessDeniedHandler {
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setStatus(HttpStatus.FORBIDDEN.value());
 
-		VehicleRuntimeException exception = new VehicleRuntimeException(ErrorCode._404, "You don't have access to this resource",
+		VehicleRuntimeException exception = new VehicleRuntimeException(ErrorCode._403, "You don't have access to this resource",
 				HttpStatus.FORBIDDEN);
 		objectMapper.writeValue(response.getOutputStream(), exception.getError());
 
