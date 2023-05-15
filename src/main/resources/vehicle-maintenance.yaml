@@ -69,6 +69,8 @@ definitions:
       image:
         type: string
         description: "URL Image of the vehicle in JPG, PNG, or GIF format"
+      customer:
+        $ref: '#/definitions/Customer'
 
   Intervention:
     type: object

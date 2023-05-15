@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import it.lorenzomalla.app.constants.Constant.ErrorCode;
 import it.lorenzomalla.app.entity.CustomerEntity;
 import it.lorenzomalla.app.exception.VehicleRuntimeException;
 import it.lorenzomalla.app.mapper.CustomerMapper;
@@ -24,7 +25,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Customer getCustomerDetails(String customerId) {
 		CustomerEntity customerEntity = customerRepository.findById(UUID.fromString(customerId))
-				.orElseThrow(() -> new VehicleRuntimeException("404", "Cliente non trovato", HttpStatus.NOT_FOUND));
+				.orElseThrow(() -> new VehicleRuntimeException(ErrorCode._404, "Customer not found", HttpStatus.NOT_FOUND));
 		return customerMapper.fromEntity(customerEntity);
 	}
 

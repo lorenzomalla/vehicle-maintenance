@@ -1,21 +1,22 @@
 package it.lorenzomalla.app.service.impl;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import it.lorenzomalla.app.configuration.security.JwtProvider;
 import it.lorenzomalla.app.constants.Constant.General;
@@ -33,6 +34,7 @@ import it.lorenzomalla.app.pojo.CustomerPojo;
 import it.lorenzomalla.app.repository.CustomerRepository;
 import it.lorenzomalla.app.repository.RoleRepository;
 import it.lorenzomalla.app.service.AuthService;
+import it.lorenzomalla.app.constants.Constant.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,19 +55,20 @@ public class AuthServiceImpl implements AuthService {
 	@Autowired
 	private CustomerMapper customerMapper;
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	@Override
 	public JWTResponse login(LoginRequest body) {
-		CustomerEntity user = customerRepository.findByEmail(body.getEmail())
-				.orElseThrow(() -> new VehicleRuntimeException("404", "Cliente non trovato", HttpStatus.NOT_FOUND));
+		CustomerEntity user = customerRepository.findByEmail(body.getEmail()).orElseThrow(
+				() -> new VehicleRuntimeException(ErrorCode._404, "Customer not found", HttpStatus.NOT_FOUND));
 		if (!encoder.matches(body.getPassword(), user.getPassword())) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenziali non valide");
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Bad credential");
 		}
-		ObjectMapper om = new ObjectMapper();
-		om.registerModules(new JavaTimeModule());
 		CustomerPojo userNode = customerMapper.fromEntityToPojo(user);
 		Map<String, Object> claimMap = new HashMap<String, Object>();
 		try {
-			claimMap.put(General.CUSTOMER, om.writeValueAsString(userNode));
+			claimMap.put(General.CUSTOMER, objectMapper.writeValueAsString(userNode));
 		} catch (JsonProcessingException e) {
 			log.error("Error during parse CustomerEntity in Signing");
 		}
@@ -74,14 +77,16 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
+	@Transactional
 	public UserInfoResponse signup(SignupRequest body) {
 		if (customerRepository.existsByUsername(body.getUsername())) {
-			throw new VehicleRuntimeException("400", "Esiste già un utente con questo username",
+			throw new VehicleRuntimeException(ErrorCode._400, "Already exist a user with this username",
 					HttpStatus.BAD_REQUEST);
 		}
 
 		if (customerRepository.existsByEmail(body.getEmail())) {
-			throw new VehicleRuntimeException("400", "Esiste già un utente con questa email", HttpStatus.BAD_REQUEST);
+			throw new VehicleRuntimeException(ErrorCode._400, "Already exist a user with this email",
+					HttpStatus.BAD_REQUEST);
 		}
 
 		CustomerEntity customerEntity = CustomerEntity.builder().username(body.getUsername()).email(body.getEmail())
@@ -105,13 +110,17 @@ public class AuthServiceImpl implements AuthService {
 		}
 		customerEntity.setRoles(roles);
 		customerRepository.save(customerEntity);
-		body.setId(customerEntity.getId());
-		return null;
+
+		return UserInfoResponse.builder()
+				.id(customerEntity.getId())
+				.email(body.getEmail())
+				.username(customerEntity.getUsername())
+				.phone(customerEntity.getPhoneNumber()).build();
 	}
 
 	private void findRole(Set<RoleEntity> roles, ERole erole) {
-		RoleEntity adminRole = roleRepository.findByName(erole)
-				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+		RoleEntity adminRole = roleRepository.findByName(erole).orElseThrow(
+				() -> new VehicleRuntimeException(ErrorCode._404, "Role not found.", HttpStatus.NOT_FOUND));
 		roles.add(adminRole);
 	}
 

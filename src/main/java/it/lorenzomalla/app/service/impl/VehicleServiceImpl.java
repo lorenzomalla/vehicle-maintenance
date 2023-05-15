@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import it.lorenzomalla.app.constants.Constant.ErrorCode;
 import it.lorenzomalla.app.entity.CustomerEntity;
 import it.lorenzomalla.app.entity.VehicleEntity;
 import it.lorenzomalla.app.exception.VehicleRuntimeException;
@@ -38,7 +39,7 @@ public class VehicleServiceImpl implements VehicleService {
 	@Override
 	public Vehicle updateVehicle(String idVehicle, Vehicle body) {
 		VehicleEntity vehicleEntity = vehicleRepository.findById(UUID.fromString(idVehicle))
-				.orElseThrow(() -> new VehicleRuntimeException("404", "Nessuno veicolo trovato da aggiornare",
+				.orElseThrow(() -> new VehicleRuntimeException(ErrorCode._404, "No vehicle found to update",
 						HttpStatus.NOT_FOUND));
 		vehicleEntity = vehicleMapper.fromRequest(body);
 		vehicleRepository.save(vehicleEntity);
@@ -54,7 +55,7 @@ public class VehicleServiceImpl implements VehicleService {
 	@Override
 	public Vehicle getVehicleById(String vehicleId) {
 		VehicleEntity vehicleEntity = vehicleRepository.findById(UUID.fromString(vehicleId))
-				.orElseThrow(() -> new VehicleRuntimeException("404", "Nessun veicolo trovato", HttpStatus.NOT_FOUND));
+				.orElseThrow(() -> new VehicleRuntimeException(ErrorCode._404, "Vehicle not found", HttpStatus.NOT_FOUND));
 		return vehicleMapper.fromEntity(vehicleEntity);
 	}
 

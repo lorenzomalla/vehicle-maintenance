@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.lorenzomalla.app.constants.Constant.ErrorCode;
 import it.lorenzomalla.app.exception.VehicleRuntimeException;
 import lombok.AllArgsConstructor;
 
@@ -30,7 +31,7 @@ public class AuthEntryPointJwtUnauth implements AuthenticationEntryPoint {
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-		VehicleRuntimeException exception = new VehicleRuntimeException("401", "You are not authorized",
+		VehicleRuntimeException exception = new VehicleRuntimeException(ErrorCode._401, "You are not authorized",
 				HttpStatus.UNAUTHORIZED);
 		objectMapper.writeValue(response.getOutputStream(), exception.getError());
 	}

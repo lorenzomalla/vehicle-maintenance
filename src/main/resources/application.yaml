@@ -17,7 +17,7 @@ spring:
 
     
 security:
-  secret: chiavesupersegretissima
+  secret: secretKey
   prefix: 'Bearer '
-  param: Authorizationn
+  param: Authorization
     

@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import it.lorenzomalla.app.constants.Constant.ErrorCode;
 import it.lorenzomalla.app.entity.InterventionEntity;
 import it.lorenzomalla.app.entity.VehicleEntity;
 import it.lorenzomalla.app.exception.VehicleRuntimeException;
@@ -51,7 +52,7 @@ public class InterventionServiceImpl implements InterventionService {
 	public Intervention updateIntervention(String interventionId, Intervention intervention) {
 		log.info("Update Intervention with Id [{}] and Body {} ", interventionId, intervention);
 		InterventionEntity interventionEntity = interventionRepository.findById(UUID.fromString(interventionId))
-				.orElseThrow(() -> new VehicleRuntimeException("404", "Non è stato trovato nessun interveto",
+				.orElseThrow(() -> new VehicleRuntimeException(ErrorCode._404, "No one intervention found",
 						HttpStatus.NOT_FOUND));
 		interventionEntity = interventionMapper.fromUpdateRequest(interventionEntity, intervention);
 
