@@ -1,6 +1,7 @@
 package it.lorenzomalla.app.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
@@ -11,7 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -48,8 +49,7 @@ public class InterventionEntity extends BaseEntity {
 	@JoinColumn(name = "vehicle_id")
 	private VehicleEntity vehicle;
 	
-	@OneToOne
-    @JoinColumn(name = "service_id")
-    private ServiceEntity service;
+	@OneToMany(mappedBy = "intervention")
+    private List<ServiceEntity> services;
 
 }

@@ -96,8 +96,10 @@ definitions:
         type: string
         format: date-time
         example: "2023-04-08T10:30:00Z"
-      service:
-        $ref: '#/definitions/Service'
+      services:
+        type: array
+        items:
+          $ref: '#/definitions/Service'
       note:
         type: string
         example: "Replaced oil and filter"

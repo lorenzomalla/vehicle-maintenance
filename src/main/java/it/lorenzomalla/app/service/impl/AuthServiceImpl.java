@@ -62,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
 		CustomerEntity user = customerRepository.findByEmail(body.getEmail()).orElseThrow(
 				() -> new VehicleRuntimeException(ErrorCode._404, "Customer not found", HttpStatus.NOT_FOUND));
 		if (!encoder.matches(body.getPassword(), user.getPassword())) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Bad credential");
+			throw new VehicleRuntimeException(ErrorCode._401, "Bad credential", HttpStatus.UNAUTHORIZED);
 		}
 		CustomerPojo userNode = customerMapper.fromEntityToPojo(user);
 		Map<String, Object> claimMap = new HashMap<String, Object>();
@@ -110,11 +110,8 @@ public class AuthServiceImpl implements AuthService {
 		customerEntity.setRoles(roles);
 		customerRepository.save(customerEntity);
 
-		return UserInfoResponse.builder()
-				.id(customerEntity.getId())
-				.email(body.getEmail())
-				.username(customerEntity.getUsername())
-				.phone(customerEntity.getPhoneNumber()).build();
+		return UserInfoResponse.builder().id(customerEntity.getId()).email(body.getEmail())
+				.username(customerEntity.getUsername()).phone(customerEntity.getPhoneNumber()).build();
 	}
 
 	private void findRole(Set<RoleEntity> roles, ERole erole) {
