@@ -1,6 +1,5 @@
 package it.lorenzomalla.app.service.impl;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.lorenzomalla.app.configuration.security.JwtProvider;
+import it.lorenzomalla.app.constants.Constant.ErrorCode;
 import it.lorenzomalla.app.constants.Constant.General;
 import it.lorenzomalla.app.constants.Constant.Role;
 import it.lorenzomalla.app.entity.CustomerEntity;
@@ -34,7 +34,6 @@ import it.lorenzomalla.app.pojo.CustomerPojo;
 import it.lorenzomalla.app.repository.CustomerRepository;
 import it.lorenzomalla.app.repository.RoleRepository;
 import it.lorenzomalla.app.service.AuthService;
-import it.lorenzomalla.app.constants.Constant.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

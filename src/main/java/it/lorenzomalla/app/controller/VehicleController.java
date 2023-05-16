@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.lorenzomalla.app.api.VehicleApi;
+import it.lorenzomalla.app.constants.Constant.Endpoint;
 import it.lorenzomalla.app.model.Vehicle;
 import it.lorenzomalla.app.service.VehicleService;
 import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/v1/api/user")
+@RequestMapping(Endpoint.USER)
 public class VehicleController implements VehicleApi {
 
 	private final VehicleService vehicleService;

@@ -13,7 +13,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import it.lorenzomalla.app.constants.Constant.Role;
-import it.lorenzomalla.app.entity.enumaration.ERole;
 import it.lorenzomalla.app.repository.CustomerRepository;
 
 @Configuration

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.lorenzomalla.app.api.AuthenticationApi;
+import it.lorenzomalla.app.constants.Constant.Endpoint;
 import it.lorenzomalla.app.model.JWTResponse;
 import it.lorenzomalla.app.model.LoginRequest;
 import it.lorenzomalla.app.model.SignupRequest;
@@ -19,7 +20,7 @@ import it.lorenzomalla.app.service.AuthService;
 
 @CrossOrigin
 @RestController
-@RequestMapping("public")
+@RequestMapping(Endpoint.PUBLIC)
 public class AuthController implements AuthenticationApi {
 
 	@Autowired

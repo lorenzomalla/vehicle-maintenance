@@ -1,16 +1,11 @@
 package it.lorenzomalla.app.entity;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -23,33 +18,28 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "intervention")
+@Table(name = "service")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class InterventionEntity extends BaseEntity {
-
+public class ServiceEntity extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(generator = "UUID")
 	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-	@Column(name = "intervention_id")
+	@Column(name = "vehicle_id")
 	private UUID id;
 
-	@Column(name = "note", columnDefinition = "text")
-	private String note;
+	private Integer price;
 
-	private LocalDateTime dateIntervention;
+	private String serviceName;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-	@JoinColumn(name = "vehicle_id")
-	private VehicleEntity vehicle;
-	
-	@OneToOne
-    @JoinColumn(name = "service_id")
-    private ServiceEntity service;
+	private Integer duration;
+
+	@OneToOne(mappedBy = "service")
+	private InterventionEntity intervention;
 
 }

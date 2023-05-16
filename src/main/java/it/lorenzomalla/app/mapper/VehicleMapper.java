@@ -18,6 +18,7 @@ public interface VehicleMapper {
 	
 	List<Vehicle> fromEntites(List<VehicleEntity> entites);
 	
+	@Mapping(target = "customer", ignore = true)
 	Vehicle fromEntity(VehicleEntity entity);
-
+	
 }

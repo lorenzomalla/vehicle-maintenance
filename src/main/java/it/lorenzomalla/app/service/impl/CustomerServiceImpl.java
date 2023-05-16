@@ -1,6 +1,7 @@
 package it.lorenzomalla.app.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -34,5 +35,12 @@ public class CustomerServiceImpl implements CustomerService {
 		List<CustomerEntity> customerEntities = customerRepository.findAll();
 		return customerMapper.fromListEntity(customerEntities);
 	}
+
+	@Override
+	public Customer getVehiclesByCustomerId(String customerId) {
+		Optional<CustomerEntity> customerEntity = customerRepository.findById(UUID.fromString(customerId));
+		return customerMapper.fromEntity(customerEntity.get());
+	}
+
 
 }

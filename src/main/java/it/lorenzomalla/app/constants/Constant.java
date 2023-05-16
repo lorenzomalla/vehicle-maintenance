@@ -18,4 +18,14 @@ public interface Constant {
 		String _401 = "401";
 		String _403 = "403";
 	}
+	
+	interface Endpoint {
+		String USER = "/v1/api/user";
+		String ADMIN = "/v1/api/admin";
+		String PUBLIC = "/public";
+	}
+	
+	interface ROLE_AUTH {
+		String ADMIN_AUTH = "hasRole('ROLE_ADMIN')";
+	}
 }

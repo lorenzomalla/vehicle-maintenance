@@ -54,6 +54,8 @@ public class VehicleEntity extends BaseEntity {
 	private String image;
 
 	private LocalDateTime registerDate;
+	
+	private Integer kilometri;
 
 	@OneToMany(mappedBy = "vehicle", cascade = CascadeType.MERGE)
 	private List<InterventionEntity> interventions;
