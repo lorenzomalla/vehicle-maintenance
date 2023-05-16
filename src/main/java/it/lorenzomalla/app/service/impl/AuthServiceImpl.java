@@ -100,6 +100,9 @@ public class AuthServiceImpl implements AuthService {
 			strRoles.forEach(role -> {
 				switch (role) {
 				case Role.USER:
+					findRole(roles, ERole.USER);
+					break;
+				case Role.ADMIN:
 					findRole(roles, ERole.ADMIN);
 					break;
 				default:
@@ -115,6 +118,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	private void findRole(Set<RoleEntity> roles, ERole erole) {
+		
 		RoleEntity adminRole = roleRepository.findByName(erole).orElseThrow(
 				() -> new VehicleRuntimeException(ErrorCode._404, "Role not found.", HttpStatus.NOT_FOUND));
 		roles.add(adminRole);

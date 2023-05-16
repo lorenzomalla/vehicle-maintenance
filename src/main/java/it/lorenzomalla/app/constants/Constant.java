@@ -26,6 +26,6 @@ public interface Constant {
 	}
 	
 	interface ROLE_AUTH {
-		String ADMIN_AUTH = "hasRole('ROLE_ADMIN')";
+		String ADMIN_AUTH = "hasAnyAuthority('ADMIN')";
 	}
 }

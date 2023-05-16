@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,18 +20,17 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RequestMapping(Endpoint.USER)
 public class ServiceController implements ServiceApi {
+	
+	private final ServiceInterventionService interventionService;
 
-	@Autowired
-	ServiceInterventionService interventionService;
-
-	@PreAuthorize(ROLE_AUTH.ADMIN_AUTH)
 	@Override
+	@PreAuthorize(ROLE_AUTH.ADMIN_AUTH)
 	public ResponseEntity<Service> createService(@Valid Service service) {
 		return ResponseEntity.ok().body(interventionService.createService(service));
 	}
 
-	@PreAuthorize(ROLE_AUTH.ADMIN_AUTH)
 	@Override
+	@PreAuthorize(ROLE_AUTH.ADMIN_AUTH)
 	public ResponseEntity<Void> deleteServiceById(String idService) {
 		interventionService.deleteServiceById(idService);
 		return ResponseEntity.ok().build();

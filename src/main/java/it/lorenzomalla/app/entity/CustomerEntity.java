@@ -56,7 +56,7 @@ public class CustomerEntity extends BaseEntity {
 	@NotBlank
 	private String password;
 
-	@Pattern(regexp = "^\\+39\\d{8,13}$|^0039\\d{8,13}$|^0\\d{8,10}$", message = "Numero di telefono non valido")
+	@Pattern(regexp = "^\\+39\\d{8,13}$|^0039\\d{8,13}$|^0\\d{8,10}$", message = "Phone number not valid")
 	private String phoneNumber;
 
 	@ManyToMany(fetch = FetchType.EAGER)

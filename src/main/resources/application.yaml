@@ -13,7 +13,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
 
     
 security:
@@ -21,3 +21,6 @@ security:
   prefix: 'Bearer '
   param: Authorization
     
+#logging:
+#  level:
+#    '[org.springframework]': trace
