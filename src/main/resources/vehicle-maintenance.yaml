@@ -354,6 +354,20 @@ paths:
           description: Intervention successfully deleted
         404:
           description: customer, vehicle, or intervention not
+
+  /interventions:
+    get:
+      summary: Get list of intervention
+      tags:
+        - Intervention
+      operationId: listOfIntervention
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Intervention'
           
   /vehicle/customer/{customerId}/create:
     post:

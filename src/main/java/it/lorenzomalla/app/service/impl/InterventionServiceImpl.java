@@ -1,5 +1,6 @@
 package it.lorenzomalla.app.service.impl;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -58,6 +59,11 @@ public class InterventionServiceImpl implements InterventionService {
 
 		interventionRepository.save(interventionEntity);
 		return intervention;
+	}
+
+	@Override
+	public List<Intervention> getListIntervention() {
+		return interventionMapper.fromEntities(interventionRepository.findAll());
 	}
 
 }

@@ -31,7 +31,7 @@ public class ServiceEntity extends BaseEntity {
 	@Id
 	@GeneratedValue(generator = "UUID")
 	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-	@Column(name = "vehicle_id")
+	@Column(name = "service_id")
 	private UUID id;
 
 	private Integer price;

@@ -29,8 +29,9 @@ public class JwtProvider {
 
 	public static String createJwt(String subject, Map<String, Object> payloadClaims) {
 		JWTCreator.Builder builder = JWT.create().withSubject(subject).withIssuer(issuer);
-		final DateTime now = DateTime.now();
-		builder.withIssuedAt(now.toDate()).withExpiresAt(now.plusDays(1).toDate());
+		// Ever expire
+//		final DateTime now = DateTime.now();
+//		builder.withIssuedAt(now.toDate()).withExpiresAt(now.plusDays(1).toDate());
 
 		for (Map.Entry<String, Object> entry : payloadClaims.entrySet()) {
 			builder.withClaim(entry.getKey(), entry.getValue().toString());

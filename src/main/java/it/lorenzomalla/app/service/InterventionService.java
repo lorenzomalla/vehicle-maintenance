@@ -1,5 +1,7 @@
 package it.lorenzomalla.app.service;
 
+import java.util.List;
+
 import it.lorenzomalla.app.model.Intervention;
 
 public interface InterventionService {
@@ -9,5 +11,7 @@ public interface InterventionService {
 	Void deleteIntervention(String interventionId);
 
 	Intervention updateIntervention(String interventionId, Intervention intervention);
+	
+	List<Intervention> getListIntervention();
 
 }
